@@ -22,6 +22,9 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
 
 /**
+ * 策略接口，解析位置格式（例如Ant风格的路径模式）获取到Resource对象。
+ * 对ResourceLoader进行了扩展。
+ *
  * Strategy interface for resolving a location pattern (for example,
  * an Ant-style path pattern) into Resource objects.
  *
@@ -63,6 +66,8 @@ public interface ResourcePatternResolver extends ResourceLoader {
 	String CLASSPATH_ALL_URL_PREFIX = "classpath*:";
 
 	/**
+	 * 解析给定的位置格式获得Resource对象
+	 *
 	 * Resolve the given location pattern into Resource objects.
 	 * <p>Overlapping resource entries that point to the same physical
 	 * resource should be avoided, as far as possible. The result should

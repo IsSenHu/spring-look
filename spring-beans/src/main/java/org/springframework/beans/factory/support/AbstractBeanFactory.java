@@ -356,6 +356,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 						Object scopedInstance = scope.get(beanName, () -> {
 							beforePrototypeCreation(beanName);
 							try {
+								// here
 								return createBean(beanName, mbd, args);
 							}
 							finally {

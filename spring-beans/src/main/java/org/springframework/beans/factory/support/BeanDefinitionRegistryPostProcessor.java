@@ -20,6 +20,13 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 
 /**
+ *  是BeanFactoryPostProcessor的子类，在BeanFactoryPostProcessor之前执行
+ *  源码中先遍历的BeanDefinitionRegistryPostProcessor（有spring提供的，还有自定义的）
+ *  自定义指的是new出来放进去的。不是实现了这个接口然后加注解@Component。
+ *	自定义的先执行
+ *	ConfigurationClassPostProcessor扫描、3种import的扫描、@Bean的扫描、判断配置类是否是一个完成的配置类
+ *	这个B做了好多好多的事，是Spring最重要的类之一
+ *
  * Extension to the standard {@link BeanFactoryPostProcessor} SPI, allowing for
  * the registration of further bean definitions <i>before</i> regular
  * BeanFactoryPostProcessor detection kicks in. In particular,

@@ -193,10 +193,13 @@ class ConstructorResolver {
 			else {
 				ConstructorArgumentValues cargs = mbd.getConstructorArgumentValues();
 				resolvedValues = new ConstructorArgumentValues();
+				// 在通过spring内部给了一个值的情况那么表示你的构造方法的参数个数一定大于等于1
+				// 如果没有给则为0
 				minNrOfArgs = resolveConstructorArguments(beanName, mbd, bw, cargs, resolvedValues);
 			}
 
 			AutowireUtils.sortConstructors(candidates);
+			// 定义了一个差异变量
 			int minTypeDiffWeight = Integer.MAX_VALUE;
 			Set<Constructor<?>> ambiguousConstructors = null;
 			LinkedList<UnsatisfiedDependencyException> causes = null;

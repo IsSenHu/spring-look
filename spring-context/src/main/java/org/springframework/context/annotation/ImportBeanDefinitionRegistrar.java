@@ -22,6 +22,8 @@ import org.springframework.beans.factory.support.BeanNameGenerator;
 import org.springframework.core.type.AnnotationMetadata;
 
 /**
+ * 可以动态的改变bd，ImportSelector能做的，这个也能做。ImportSelector不能做的，这个也能做。
+ *
  * Interface to be implemented by types that register additional bean definitions when
  * processing @{@link Configuration} classes. Useful when operating at the bean definition
  * level (as opposed to {@code @Bean} method/instance level) is desired or necessary.

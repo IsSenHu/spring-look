@@ -21,6 +21,11 @@ import java.util.Locale;
 import org.springframework.lang.Nullable;
 
 /**
+ * 用于解析消息的策略接口，支持此类消息的参数化和国际化。
+ * Spring为生产提供了两种开箱即用的实现:
+ * ResourceBundleMessageSource
+ * ReloadableResourceBundleMessageSource
+ *
  * Strategy interface for resolving messages, with support for the parameterization
  * and internationalization of such messages.
  *
@@ -40,6 +45,8 @@ import org.springframework.lang.Nullable;
 public interface MessageSource {
 
 	/**
+	 * 尝试解析消息。如果没有找到消息，返回默认消息。
+	 *
 	 * Try to resolve the message. Return default message if no message was found.
 	 * @param code the message code to look up, e.g. 'calculator.noRateSet'.
 	 * MessageSource users are encouraged to base message names on qualified class
@@ -58,6 +65,8 @@ public interface MessageSource {
 	String getMessage(String code, @Nullable Object[] args, @Nullable String defaultMessage, Locale locale);
 
 	/**
+	 * 尝试解析消息。如果无法找到消息，则将其视为错误。
+	 *
 	 * Try to resolve the message. Treat as an error if the message can't be found.
 	 * @param code the message code to look up, e.g. 'calculator.noRateSet'.
 	 * MessageSource users are encouraged to base message names on qualified class
@@ -74,6 +83,8 @@ public interface MessageSource {
 	String getMessage(String code, @Nullable Object[] args, Locale locale) throws NoSuchMessageException;
 
 	/**
+	 * 尝试使用传入的{@code MessageSourceResolvable}参数中包含的所有属性来解析消息。
+	 *
 	 * Try to resolve the message using all the attributes contained within the
 	 * {@code MessageSourceResolvable} argument that was passed in.
 	 * <p>NOTE: We must throw a {@code NoSuchMessageException} on this method

@@ -17,6 +17,8 @@
 package org.springframework.context;
 
 /**
+ * 一个为启动/停止生命周期控制定义方法的公共接口。
+ *
  * A common interface defining methods for start/stop lifecycle control.
  * The typical use case for this is to control asynchronous processing.
  * <b>NOTE: This interface does not imply specific auto-startup semantics.
@@ -50,6 +52,8 @@ package org.springframework.context;
 public interface Lifecycle {
 
 	/**
+	 * 启动此组件。
+	 *
 	 * Start this component.
 	 * <p>Should not throw an exception if the component is already running.
 	 * <p>In the case of a container, this will propagate the start signal to all
@@ -59,6 +63,9 @@ public interface Lifecycle {
 	void start();
 
 	/**
+	 * 通常以同步方式停止此组件，以使该组件在返回此方法后完全停止。
+	 * 当需要异步停止行为时，请考虑实现{@link SmartLifecycle}及其{@code stop（Runnable）}变体。
+	 *
 	 * Stop this component, typically in a synchronous fashion, such that the component is
 	 * fully stopped upon return of this method. Consider implementing {@link SmartLifecycle}
 	 * and its {@code stop(Runnable)} variant when asynchronous stop behavior is necessary.
@@ -76,6 +83,8 @@ public interface Lifecycle {
 	void stop();
 
 	/**
+	 * 检查此组件当前是否正在运行。
+	 *
 	 * Check whether this component is currently running.
 	 * <p>In the case of a container, this will return {@code true} only if <i>all</i>
 	 * components that apply are currently running.

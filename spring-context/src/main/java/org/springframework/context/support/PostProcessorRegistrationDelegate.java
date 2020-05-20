@@ -92,24 +92,31 @@ final class PostProcessorRegistrationDelegate {
 				}
 			}
 			sortPostProcessors(currentRegistryProcessors, beanFactory);
+			// 合并
 			registryProcessors.addAll(currentRegistryProcessors);
+			// 执行BeanDefinitionRegistryPostProcessor
 			invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry);
 			currentRegistryProcessors.clear();
 
 			// Next, invoke the BeanDefinitionRegistryPostProcessors that implement Ordered.
+			// 接下来，调用实现Ordered的BeanDefinitionRegistryPostProcessors。
 			postProcessorNames = beanFactory.getBeanNamesForType(BeanDefinitionRegistryPostProcessor.class, true, false);
 			for (String ppName : postProcessorNames) {
+				// 这里是判断有没有新的BeanDefinitionRegistryPostProcessors，可能上面的invokeBeanDefinitionRegistryPostProcessors中产生类新的BeanDefinitionRegistryPostProcessors
 				if (!processedBeans.contains(ppName) && beanFactory.isTypeMatch(ppName, Ordered.class)) {
 					currentRegistryProcessors.add(beanFactory.getBean(ppName, BeanDefinitionRegistryPostProcessor.class));
 					processedBeans.add(ppName);
 				}
 			}
+			// 处理排序
 			sortPostProcessors(currentRegistryProcessors, beanFactory);
 			registryProcessors.addAll(currentRegistryProcessors);
+			// 执行BeanDefinitionRegistryPostProcessor
 			invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry);
 			currentRegistryProcessors.clear();
 
 			// Finally, invoke all other BeanDefinitionRegistryPostProcessors until no further ones appear.
+			// 最后，调用所有其他BeanDefinitionRegistryPostProcessor，直到不再出现。和上面同理，判断有没有新的出现，直到不出现为止
 			boolean reiterate = true;
 			while (reiterate) {
 				reiterate = false;
@@ -128,7 +135,11 @@ final class PostProcessorRegistrationDelegate {
 			}
 
 			// Now, invoke the postProcessBeanFactory callback of all processors handled so far.
+			// 现在，调用到目前为止已处理的所有处理器的postProcessBeanFactory回调。
+			// 上面以及处理完了BeanDefinitionRegistryPostProcessor，现在来处理BeanDefinitionRegistryPostProcessor的父类，
+			// 也就是BeanFactoryPostProcessor
 			invokeBeanFactoryPostProcessors(registryProcessors, beanFactory);
+			// 自定义
 			invokeBeanFactoryPostProcessors(regularPostProcessors, beanFactory);
 		}
 

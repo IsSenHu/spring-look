@@ -19,6 +19,10 @@ package org.springframework.beans.factory.config;
 import org.springframework.beans.BeansException;
 
 /**
+ * spring扩展点之一
+ * springBean容器当中任意一个bean被new出来之前执行，针对beanFactory来建设
+ * ConfigurationClassPostProcessor#postProcessBeanFactory针对配置类加上cglib代理
+ *
  * Factory hook that allows for custom modification of an application context's
  * bean definitions, adapting the bean property values of the context's underlying
  * bean factory.

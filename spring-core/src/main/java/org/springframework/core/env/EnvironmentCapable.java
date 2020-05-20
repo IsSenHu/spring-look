@@ -17,6 +17,10 @@
 package org.springframework.core.env;
 
 /**
+ * 接口，该接口指示包含和公开{@link Environment}引用的组件。
+ * 所有Spring应用程序上下文都是可环境的，并且该接口主要用于在框架方法中执行{@code instanceof}检查，
+ * 这些方法接受可能是或不是实际的ApplicationContext实例的BeanFactory实例，以便在环境确实可用时与环境进行交互。
+ *
  * Interface indicating a component that contains and exposes an {@link Environment} reference.
  *
  * <p>All Spring application contexts are EnvironmentCapable, and the interface is used primarily
@@ -41,6 +45,8 @@ package org.springframework.core.env;
 public interface EnvironmentCapable {
 
 	/**
+	 * 返回与此组件关联的{@link Environment}。
+	 *
 	 * Return the {@link Environment} associated with this component.
 	 */
 	Environment getEnvironment();

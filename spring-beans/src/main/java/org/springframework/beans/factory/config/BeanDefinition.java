@@ -23,6 +23,9 @@ import org.springframework.core.ResolvableType;
 import org.springframework.lang.Nullable;
 
 /**
+ * 类似在Java中，类用Class对象来描述
+ * 在Spring中，一个Bean由BeanDefinition来描述
+ *
  * A BeanDefinition describes a bean instance, which has property values,
  * constructor argument values, and further information supplied by
  * concrete implementations.

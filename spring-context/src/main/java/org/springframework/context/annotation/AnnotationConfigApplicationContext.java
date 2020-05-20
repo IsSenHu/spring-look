@@ -53,8 +53,21 @@ import org.springframework.util.Assert;
  */
 public class AnnotationConfigApplicationContext extends GenericApplicationContext implements AnnotationConfigRegistry {
 
+	/**
+	 * 这个类是一个reader，一个读取器
+	 * 读取什么呢？意思是读取一个被加了注解的bean
+	 * 这个类在构造方法中实例化
+	 */
 	private final AnnotatedBeanDefinitionReader reader;
 
+	/**
+	 * 同意顾名思义，这是一个扫描器，扫描所有加类注解的bean
+	 * 同样是在构造方法中被实例化的
+	 * 可以用来扫描包或者类，继而转换成bd
+	 * 但是实际上我们扫描包工作不是scanner这个对象来完成的
+	 * 是spring自己new的一个ClassPathBeanDefinitionScanner
+	 * 这里的scanner仅仅是为了能够在外部调用AnnotationConfigApplicationContext对象的scan方法
+	 */
 	private final ClassPathBeanDefinitionScanner scanner;
 
 
@@ -63,7 +76,9 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	 * through {@link #register} calls and then manually {@linkplain #refresh refreshed}.
 	 */
 	public AnnotationConfigApplicationContext() {
+		// 创建一个读取注解的Bean定义读取器，什么是Bean定义？BeanDefinition
 		this.reader = new AnnotatedBeanDefinitionReader(this);
+		// 主要是进行类的扫描，然后把类变成BeanDefinition
 		this.scanner = new ClassPathBeanDefinitionScanner(this);
 	}
 
