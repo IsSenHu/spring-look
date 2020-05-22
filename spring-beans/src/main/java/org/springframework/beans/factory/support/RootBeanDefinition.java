@@ -35,6 +35,9 @@ import org.springframework.util.Assert;
 
 /**
  * spring内部提供的类
+ * 示在运行时支持Spring BeanFactory中特定bean的合并bean定义。
+ * 它可能是从多个相互继承的原始bean定义创建的，通常注册为{@link GenericBeanDefinition GenericBeanDefinitions}。
+ * root bean definition本质上是运行时的“统一”bean定义视图。
  *
  * A root bean definition represents the merged bean definition that backs
  * a specific bean in a Spring BeanFactory at runtime. It might have been created

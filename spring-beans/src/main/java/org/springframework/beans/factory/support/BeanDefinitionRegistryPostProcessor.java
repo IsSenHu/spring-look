@@ -20,11 +20,12 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 
 /**
+ * 	针对于BeanDefinitionRegistry
  *  是BeanFactoryPostProcessor的子类，在BeanFactoryPostProcessor之前执行
  *  源码中先遍历的BeanDefinitionRegistryPostProcessor（有spring提供的，还有自定义的）
  *  自定义指的是new出来放进去的。不是实现了这个接口然后加注解@Component。
  *	自定义的先执行
- *	ConfigurationClassPostProcessor扫描、3种import的扫描、@Bean的扫描、判断配置类是否是一个完成的配置类
+ *	ConfigurationClassPostProcessor扫描、3种import的扫描、@Bean的扫描、判断配置类是否是一个完全的配置类
  *	这个B做了好多好多的事，是Spring最重要的类之一
  *
  * Extension to the standard {@link BeanFactoryPostProcessor} SPI, allowing for
@@ -40,6 +41,10 @@ import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 public interface BeanDefinitionRegistryPostProcessor extends BeanFactoryPostProcessor {
 
 	/**
+	 * 在应用程序上下文的标准初始化之后修改其内部bean定义注册表。
+	 * 所有常规bean定义都已加载，但还没有实例化任何bean。
+	 * 这允许在下一个后处理阶段开始之前添加更多的bean定义。
+	 *
 	 * Modify the application context's internal bean definition registry after its
 	 * standard initialization. All regular bean definitions will have been loaded,
 	 * but no beans will have been instantiated yet. This allows for adding further

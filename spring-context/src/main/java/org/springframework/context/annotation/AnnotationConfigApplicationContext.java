@@ -70,7 +70,6 @@ public class AnnotationConfigApplicationContext extends GenericApplicationContex
 	 */
 	private final ClassPathBeanDefinitionScanner scanner;
 
-
 	/**
 	 * Create a new AnnotationConfigApplicationContext that needs to be populated
 	 * through {@link #register} calls and then manually {@linkplain #refresh refreshed}.
