@@ -115,6 +115,7 @@ final class PostProcessorRegistrationDelegate {
 			invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry);
 			// 执行完成后将当前要执行的BeanDefinitionRegistryPostProcessor的集合清空
 			currentRegistryProcessors.clear();
+			// 看完这里了
 
 			// Next, invoke the BeanDefinitionRegistryPostProcessors that implement Ordered.
 			// 接下来，调用实现Ordered的BeanDefinitionRegistryPostProcessors。
