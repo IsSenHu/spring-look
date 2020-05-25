@@ -275,7 +275,9 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 		for (String basePackage : basePackages) {
 			// 到指定包下去找
 			Set<BeanDefinition> candidates = findCandidateComponents(basePackage);
+			// 遍历做一些处理
 			for (BeanDefinition candidate : candidates) {
+				// 设置scope属性
 				ScopeMetadata scopeMetadata = this.scopeMetadataResolver.resolveScopeMetadata(candidate);
 				candidate.setScope(scopeMetadata.getScopeName());
 				String beanName = this.beanNameGenerator.generateBeanName(candidate, this.registry);
@@ -287,8 +289,11 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 				if (candidate instanceof AnnotatedBeanDefinition) {
 					AnnotationConfigUtils.processCommonDefinitionAnnotations((AnnotatedBeanDefinition) candidate);
 				}
+				// 检查给定候选者的bean名称，确定是否需要注册相应的bean定义或与现有定义冲突。暂时理解为差不多为同一个BeanDefinition。
+				// 是同一个的话说明已经添加过了
 				if (checkCandidate(beanName, candidate)) {
 					BeanDefinitionHolder definitionHolder = new BeanDefinitionHolder(candidate, beanName);
+					// 应用作用域代理模式
 					definitionHolder =
 							AnnotationConfigUtils.applyScopedProxyMode(scopeMetadata, definitionHolder, this.registry);
 					beanDefinitions.add(definitionHolder);
@@ -328,6 +333,8 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 
 
 	/**
+	 * 检查给定候选者的bean名称，确定是否需要注册相应的bean定义或与现有定义冲突。
+	 *
 	 * Check the given candidate's bean name, determining whether the corresponding
 	 * bean definition needs to be registered or conflicts with an existing definition.
 	 * @param beanName the suggested name for the bean
@@ -347,6 +354,7 @@ public class ClassPathBeanDefinitionScanner extends ClassPathScanningCandidateCo
 		if (originatingDef != null) {
 			existingDef = originatingDef;
 		}
+		// 和现存的是否兼容，如果是兼容的则不再添加
 		if (isCompatible(beanDefinition, existingDef)) {
 			return false;
 		}

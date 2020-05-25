@@ -96,7 +96,8 @@ final class PostProcessorRegistrationDelegate {
 			List<BeanDefinitionRegistryPostProcessor> currentRegistryProcessors = new ArrayList<>();
 
 			// First, invoke the BeanDefinitionRegistryPostProcessors that implement PriorityOrdered.
-			// 首先，执行实现PriorityOrdered的BeanDefinitionRegistryPostProcessors
+			// 首先，执行实现PriorityOrdered的BeanDefinitionRegistryPostProcessors，也就是优先排序的
+			// 这里默认只有ConfigurationClassPostProcessor
 			String[] postProcessorNames =
 					beanFactory.getBeanNamesForType(BeanDefinitionRegistryPostProcessor.class, true, false);
 			for (String ppName : postProcessorNames) {
@@ -110,6 +111,7 @@ final class PostProcessorRegistrationDelegate {
 			// 记录排好序的实现了PriorityOrdered的BeanDefinitionRegistryPostProcessor
 			registryProcessors.addAll(currentRegistryProcessors);
 			// 执行BeanDefinitionRegistryPostProcessor**************************************重点
+			// 其实也就是执行ConfigurationClassPostProcessor
 			invokeBeanDefinitionRegistryPostProcessors(currentRegistryProcessors, registry);
 			// 执行完成后将当前要执行的BeanDefinitionRegistryPostProcessor的集合清空
 			currentRegistryProcessors.clear();

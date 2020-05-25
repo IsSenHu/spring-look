@@ -285,6 +285,7 @@ public class AnnotatedBeanDefinitionReader {
 		// 这个BeanDefinitionHolder也是一个数据结构
 		BeanDefinitionHolder definitionHolder = new BeanDefinitionHolder(abd, beanName);
 		// ScopedProxyModel，这个知识点比较复杂，需要结合web去理解，可以暂时放一下
+		// 应用作用域代理模式
 		definitionHolder = AnnotationConfigUtils.applyScopedProxyMode(scopeMetadata, definitionHolder, this.registry);
 		// 把上述的这个数据结构注册给registry
 		BeanDefinitionReaderUtils.registerBeanDefinition(definitionHolder, this.registry);

@@ -166,6 +166,7 @@ import org.springframework.core.io.support.PropertySourceFactory;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
+// 可重复使用的注解，可以单独的重复使用，并且可以也表示容器注解是PropertySources
 @Repeatable(PropertySources.class)
 public @interface PropertySource {
 

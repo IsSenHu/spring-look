@@ -223,17 +223,19 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 	 */
 	@Override
 	public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) {
+		// 检查这个BeanDefinitionRegistry是否已经参与过ConfigurationClassPostProcessor#postProcessBeanDefinitionRegistry的处理
 		int registryId = System.identityHashCode(registry);
 		if (this.registriesPostProcessed.contains(registryId)) {
 			throw new IllegalStateException(
 					"postProcessBeanDefinitionRegistry already called on this post-processor against " + registry);
 		}
+		// 检查这个BeanDefinitionRegistry是否已经参与过ConfigurationClassPostProcessor#postProcessBeanFactory的处理
 		if (this.factoriesPostProcessed.contains(registryId)) {
 			throw new IllegalStateException(
 					"postProcessBeanFactory already called on this post-processor against " + registry);
 		}
+		// 记录
 		this.registriesPostProcessed.add(registryId);
-
 		processConfigBeanDefinitions(registry);
 	}
 
@@ -304,6 +306,7 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 		});
 
 		// Detect any custom bean name generation strategy supplied through the enclosing application context
+		// 检测通过封闭的应用程序上下文提供的任何自定义bean名称生成策略
 		SingletonBeanRegistry sbr = null;
 		if (registry instanceof SingletonBeanRegistry) {
 			sbr = (SingletonBeanRegistry) registry;
@@ -330,26 +333,37 @@ public class ConfigurationClassPostProcessor implements BeanDefinitionRegistryPo
 		Set<BeanDefinitionHolder> candidates = new LinkedHashSet<>(configCandidates);
 		Set<ConfigurationClass> alreadyParsed = new HashSet<>(configCandidates.size());
 		do {
+			// 开始解析
 			parser.parse(candidates);
+			// 主要是检查如果使用了cglib，能否被cglib代理，静态方法不做限制
 			parser.validate();
 
 			// 这里得到 parser.parse(candidates) 解析出来的ConfigurationClass
 			Set<ConfigurationClass> configClasses = new LinkedHashSet<>(parser.getConfigurationClasses());
+			// 移除已经解析过的ConfigClass
 			configClasses.removeAll(alreadyParsed);
 
 			// Read the model and create bean definitions based on its content
+			// 阅读模型并根据其内容创建bean定义
 			if (this.reader == null) {
+				// 这里使用的是我们新建的。
 				this.reader = new ConfigurationClassBeanDefinitionReader(
 						registry, this.sourceExtractor, this.resourceLoader, this.environment,
 						this.importBeanNameGenerator, parser.getImportRegistry());
 			}
+			// 加载BeanDefinition
 			this.reader.loadBeanDefinitions(configClasses);
+			// 记录已经加载过的ConfigClass
 			alreadyParsed.addAll(configClasses);
-
+			// 候选人清空
 			candidates.clear();
+			// 如果注册的数量大于一开始的数量，说明新注册了BD
 			if (registry.getBeanDefinitionCount() > candidateNames.length) {
+				// 新的BD
 				String[] newCandidateNames = registry.getBeanDefinitionNames();
+				// 旧的BD
 				Set<String> oldCandidateNames = new HashSet<>(Arrays.asList(candidateNames));
+				// 已经解析的类
 				Set<String> alreadyParsedClasses = new HashSet<>();
 				for (ConfigurationClass configurationClass : alreadyParsed) {
 					alreadyParsedClasses.add(configurationClass.getMetadata().getClassName());

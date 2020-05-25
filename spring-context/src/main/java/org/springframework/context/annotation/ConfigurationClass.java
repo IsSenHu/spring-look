@@ -35,6 +35,9 @@ import org.springframework.util.Assert;
 import org.springframework.util.ClassUtils;
 
 /**
+ * 表示用户定义的{@link Configuration @Configuration}类。
+ * 包括一组{@link Bean}方法，包括所有在类的祖先中以“扁平化”方式定义的方法。
+ *
  * Represents a user-defined {@link Configuration @Configuration} class.
  * Includes a set of {@link Bean} methods, including all such methods
  * defined in the ancestry of the class, in a 'flattened-out' manner.
@@ -211,6 +214,8 @@ final class ConfigurationClass {
 
 	public void validate(ProblemReporter problemReporter) {
 		// A configuration class may not be final (CGLIB limitation) unless it declares proxyBeanMethods=false
+		// 除非配置类声明了proxyBeanMethods = false，否则它可能不是最终的（CGLIB限制）
+		// 意思就是这个类是否可以被继承，cglib可以对其进行代理
 		Map<String, Object> attributes = this.metadata.getAnnotationAttributes(Configuration.class.getName());
 		if (attributes != null && (Boolean) attributes.get("proxyBeanMethods")) {
 			if (this.metadata.isFinal()) {
