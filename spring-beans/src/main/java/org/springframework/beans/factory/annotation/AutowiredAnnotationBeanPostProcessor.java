@@ -259,8 +259,10 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 			throws BeanCreationException {
 
 		// Let's check for lookup methods here...
+		// 让我们在这里检查查找方法...
 		if (!this.lookupMethodsChecked.contains(beanName)) {
 			if (AnnotationUtils.isCandidateClass(beanClass, Lookup.class)) {
+				// Lookup
 				try {
 					Class<?> targetClass = beanClass;
 					do {
@@ -272,6 +274,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 								try {
 									RootBeanDefinition mbd = (RootBeanDefinition)
 											this.beanFactory.getMergedBeanDefinition(beanName);
+									// 添加Overrides
 									mbd.getMethodOverrides().addOverride(override);
 								}
 								catch (NoSuchBeanDefinitionException ex) {
@@ -282,6 +285,7 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 						});
 						targetClass = targetClass.getSuperclass();
 					}
+					// 找到父类不是Object为止
 					while (targetClass != null && targetClass != Object.class);
 
 				}
@@ -289,10 +293,12 @@ public class AutowiredAnnotationBeanPostProcessor extends InstantiationAwareBean
 					throw new BeanCreationException(beanName, "Lookup method resolution failed", ex);
 				}
 			}
+			// 记录对应的beanName已经检查过Lookup了
 			this.lookupMethodsChecked.add(beanName);
 		}
 
 		// Quick check on the concurrent map first, with minimal locking.
+		// 首先以最小的锁定快速检查并发映射。
 		Constructor<?>[] candidateConstructors = this.candidateConstructorsCache.get(beanClass);
 		if (candidateConstructors == null) {
 			// Fully synchronized resolution now...

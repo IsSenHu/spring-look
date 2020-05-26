@@ -148,6 +148,7 @@ class ConstructorResolver {
 				}
 			}
 			if (argsToResolve != null) {
+				// 解析已准备的参数
 				argsToUse = resolvePreparedArguments(beanName, mbd, bw, constructorToUse, argsToResolve, true);
 			}
 		}
@@ -453,7 +454,9 @@ class ConstructorResolver {
 
 		if (factoryMethodToUse == null || argsToUse == null) {
 			// Need to determine the factory method...
+			// 需要确定工厂方法...
 			// Try all methods with this name to see if they match the given arguments.
+			// 尝试使用此名称的所有方法，以查看它们是否与给定参数匹配。
 			factoryClass = ClassUtils.getUserClass(factoryClass);
 
 			List<Method> candidates = null;
@@ -475,8 +478,10 @@ class ConstructorResolver {
 				}
 			}
 
+			// 如果有唯一候选工厂方法，并且显示参数为null并且没有构造参数的值
 			if (candidates.size() == 1 && explicitArgs == null && !mbd.hasConstructorArgumentValues()) {
 				Method uniqueCandidate = candidates.get(0);
+				// 使用唯一的候选工厂方法
 				if (uniqueCandidate.getParameterCount() == 0) {
 					mbd.factoryMethodToIntrospect = uniqueCandidate;
 					synchronized (mbd.constructorArgumentLock) {
@@ -489,6 +494,7 @@ class ConstructorResolver {
 				}
 			}
 
+			// 排序，按包访问权限和方法的参数个数进行排序
 			if (candidates.size() > 1) {  // explicitly skip immutable singletonList
 				candidates.sort(AutowireUtils.EXECUTABLE_COMPARATOR);
 			}
