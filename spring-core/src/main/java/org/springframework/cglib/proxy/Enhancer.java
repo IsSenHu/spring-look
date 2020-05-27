@@ -325,6 +325,9 @@ public class Enhancer extends AbstractClassGenerator {
 	}
 
 	/**
+	 * 设置增强的对象实例是否应该实现{@link Factory}接口。这是为那些需要代理与目标更加难以区分的工具添加的。
+	 * 此外，在某些情况下，可能需要禁用<code>Factory</code>接口，以防止代码更改底层回调。
+	 *
 	 * Set whether the enhanced object instances should implement
 	 * the {@link Factory} interface.
 	 * This was added for tools that need for proxies to be more
@@ -332,6 +335,7 @@ public class Enhancer extends AbstractClassGenerator {
 	 * be necessary to disable the <code>Factory</code> interface to
 	 * prevent code from changing the underlying callbacks.
 	 * @param useFactory whether to implement <code>Factory</code>; default is <code>true</code>
+	 *                   useFactory是否实现<code> Factory </ code>;默认为<code> true </ code>
 	 */
 	public void setUseFactory(boolean useFactory) {
 		this.useFactory = useFactory;

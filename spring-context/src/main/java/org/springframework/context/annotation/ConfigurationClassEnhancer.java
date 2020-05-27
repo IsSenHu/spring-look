@@ -72,12 +72,17 @@ import org.springframework.util.ReflectionUtils;
  */
 class ConfigurationClassEnhancer {
 
-	// The callbacks to use. Note that these callbacks must be stateless.
+	/**
+	 * The callbacks to use. Note that these callbacks must be stateless.
+	 */
 	private static final Callback[] CALLBACKS = new Callback[] {
 			// 增强方法，主要控制bean的作用域
 			// 不每次都去调用new
+			// @Bean
 			new BeanMethodInterceptor(),
+			// setBeanFactory()
 			new BeanFactoryAwareMethodInterceptor(),
+			// 不做什么操作
 			NoOp.INSTANCE
 	};
 
@@ -97,7 +102,7 @@ class ConfigurationClassEnhancer {
 	 * @return the enhanced subclass
 	 */
 	public Class<?> enhance(Class<?> configClass, @Nullable ClassLoader classLoader) {
-		// 哦安段是不是被代理过
+		// 是不是被代理过
 		if (EnhancedConfiguration.class.isAssignableFrom(configClass)) {
 			if (logger.isDebugEnabled()) {
 				logger.debug(String.format("Ignoring request to enhance %s as it has " +
@@ -126,16 +131,21 @@ class ConfigurationClassEnhancer {
 		// 设置父类
 		enhancer.setSuperclass(configSuperClass);
 		// 设置实现的接口
+		// EnhancedConfiguration继承了BeanFactoryAware，可以将BeanFactory设置进来
 		enhancer.setInterfaces(new Class<?>[] {EnhancedConfiguration.class});
+		// 是否实现Factory接口
 		enhancer.setUseFactory(false);
+		// 设置命名策略
 		enhancer.setNamingPolicy(SpringNamingPolicy.INSTANCE);
 		// 生成类的策略
 		// 主要为生成的CGLIB类中添加成员变量$$beanFactory
+		// public BeanFactory $$beanFactory
 		// 同时基于接口EnhancedConfiguration的父接口BeanFactoryAware中的setBeanFactory方法，
 		// 设置此变量的值为当前Context中的beanFactory，这样一来我们这个cglib代理的对象就有了beanFactory
 		// 有了factory就能获得对象，而不用去通过方法获得对象了，因为通过方法获得对象不能控制过程
 		// 该BeanFactory的作用是在this调用时拦截该调用，并直接在beanFactory中获得目标bean
 		enhancer.setStrategy(new BeanFactoryAwareGeneratorStrategy(classLoader));
+		// 回调方法过滤器，在CGLib回调时可以设置对不同方法执行不同的回调逻辑，或者根本不执行回调。
 		enhancer.setCallbackFilter(CALLBACK_FILTER);
 		enhancer.setCallbackTypes(CALLBACK_FILTER.getCallbackTypes());
 		return enhancer;
@@ -232,6 +242,7 @@ class ConfigurationClassEnhancer {
 				@Override
 				public void end_class() {
 					// 声明一个域
+					// public BeanFactory $$beanFactory
 					declare_field(Constants.ACC_PUBLIC, BEAN_FACTORY_FIELD, Type.getType(BeanFactory.class), null);
 					super.end_class();
 				}
@@ -257,7 +268,9 @@ class ConfigurationClassEnhancer {
 			field.set(obj, args[0]);
 
 			// Does the actual (non-CGLIB) superclass implement BeanFactoryAware?
+			// 实际的（非CGLIB）超类是否实现BeanFactoryAware？
 			// If so, call its setBeanFactory() method. If not, just exit.
+			// 如果是这样，请调用其setBeanFactory（）方法。如果没有，请退出。
 			if (BeanFactoryAware.class.isAssignableFrom(ClassUtils.getUserClass(obj.getClass().getSuperclass()))) {
 				return proxy.invokeSuper(obj, args);
 			}
@@ -322,10 +335,11 @@ class ConfigurationClassEnhancer {
 				Object factoryBean = beanFactory.getBean(BeanFactory.FACTORY_BEAN_PREFIX + beanName);
 				if (factoryBean instanceof ScopedProxyFactoryBean) {
 					// Scoped proxy factory beans are a special case and should not be further proxied
+					// 范围限定的代理工厂bean是一种特殊情况，不应进一步进行代理
 				}
 				else {
 					// It is a candidate FactoryBean - go ahead with enhancement
-					// 增强FactoryBean
+					// 增强FactoryBean的getObject()
 					return enhanceFactoryBean(factoryBean, beanMethod.getReturnType(), beanFactory, beanName);
 				}
 			}
@@ -333,6 +347,8 @@ class ConfigurationClassEnhancer {
 			// 一个非常牛皮的判断
 			// 判断执行的方法和调用方法是不是同一个方法
 			if (isCurrentlyInvokedFactoryMethod(beanMethod)) {
+				// 工厂正在调用bean方法以便实例化和注册bean
+				// 即通过getBean（）调用）-> 调用方法的父类实现以实际创建bean实例。
 				// The factory is calling the bean method in order to instantiate and register the bean
 				// (i.e. via a getBean() call) -> invoke the super implementation of the method to actually
 				// create the bean instance.
@@ -346,10 +362,10 @@ class ConfigurationClassEnhancer {
 									"these container lifecycle issues; see @Bean javadoc for complete details.",
 							beanMethod.getDeclaringClass().getSimpleName(), beanMethod.getName()));
 				}
-				// 调用父类的方法
+				// 调用父类的方法创建Bean
 				return cglibMethodProxy.invokeSuper(enhancedConfigInstance, beanMethodArgs);
 			}
-
+			// 否则解析Bean引用 -> 相当于直接使用beanFactory获得实例
 			return resolveBeanReference(beanMethod, beanMethodArgs, beanFactory, beanName);
 		}
 

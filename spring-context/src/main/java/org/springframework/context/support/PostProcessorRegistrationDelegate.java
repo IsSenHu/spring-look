@@ -279,7 +279,7 @@ final class PostProcessorRegistrationDelegate {
 		registerBeanPostProcessors(beanFactory, orderedPostProcessors);
 
 		// Now, register all regular BeanPostProcessors.
-		// 限制，注册常规的BeanPostProcessors
+		// 现在，注册常规的BeanPostProcessors
 		List<BeanPostProcessor> nonOrderedPostProcessors = new ArrayList<>(nonOrderedPostProcessorNames.size());
 		for (String ppName : nonOrderedPostProcessorNames) {
 			BeanPostProcessor pp = beanFactory.getBean(ppName, BeanPostProcessor.class);
@@ -352,6 +352,9 @@ final class PostProcessorRegistrationDelegate {
 
 
 	/**
+	 * BeanPostProcessor，当bean在BeanPostProcessor实例化过程中被创建时，
+	 * 即当一个bean没有资格被所有BeanPostProcessor处理时，它记录一条信息消息。
+	 *
 	 * BeanPostProcessor that logs an info message when a bean is created during
 	 * BeanPostProcessor instantiation, i.e. when a bean is not eligible for
 	 * getting processed by all BeanPostProcessors.
