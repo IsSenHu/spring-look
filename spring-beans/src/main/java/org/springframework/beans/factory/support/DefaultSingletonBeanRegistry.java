@@ -181,9 +181,16 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 */
 	@Nullable
 	protected Object getSingleton(String beanName, boolean allowEarlyReference) {
+		// 如果实例已经被创建完成了，则可以从这里获取到。
 		Object singletonObject = this.singletonObjects.get(beanName);
 		// 单例集合中没有找到并在正在创建中
+		// 假如A和B循环依赖，则初始化A时填充自动注入的属性B时，B还没有被初始化，则会先去初始化B并获得B。第一次B走到这里来的时候也没有B也没有在创建中。
+		// 当B和A一样准备填充自动注入的属性A时，又回从这里来找A，这时候A还没有初始化完成，所以singletonObjects里没有A但是A已经在创建中，所以此时会进这个if语句块
+		// 先尝试从早期单例集合中获取获取不成功的话则从缓存的singletonFactory中获取。我们直到在创建A的时候均把这自己和自己的单例工厂缓存了。所以可以取得到。
+		// 这时候B就获取到了A以至于可以填充A属性，这时候B就可以顺利初始化完成，A也得到了B进行自动注入。这样就可以进行循环依赖了。
 		if (singletonObject == null && isSingletonCurrentlyInCreation(beanName)) {
+			// 实例在创建之前会记录在singletonsCurrentlyInCreation集合中，表示正在创建
+			// 实例在创建之后会从singletonsCurrentlyInCreation集合中移除，表示创建结束
 			synchronized (this.singletonObjects) {
 				// 从早期单例集合中获取
 				singletonObject = this.earlySingletonObjects.get(beanName);
