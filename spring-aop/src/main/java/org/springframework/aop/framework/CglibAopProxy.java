@@ -204,7 +204,7 @@ class CglibAopProxy implements AopProxy, Serializable {
 					this.advised.getConfigurationOnlyCopy(), this.fixedInterceptorMap, this.fixedInterceptorOffset));
 			enhancer.setCallbackTypes(types);
 
-			// 生成代理类并创建代理实例。
+			// Generate the proxy class and create a proxy instance.
 			// Generate the proxy class and create a proxy instance.
 			return createProxyClassAndInstance(enhancer, callbacks);
 		}

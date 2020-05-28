@@ -614,6 +614,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
 			// here 填充Bean
 			populateBean(beanName, mbd, instanceWrapper);
 			// 应用工厂aware回调以及init方法和BeanPostProcessor。
+			// 这里的BeanPostProcessor包括了AOP生成代理的BeanPostProcessor
 			exposedObject = initializeBean(beanName, exposedObject, mbd);
 		}
 		catch (Throwable ex) {
