@@ -255,8 +255,11 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 		}
 
 		// Create proxy here if we have a custom TargetSource.
+		// 如果我们有自定义的TargetSource，请在此处创建代理。
 		// Suppresses unnecessary default instantiation of the target bean:
+		// 禁止目标Bean的不必要的默认实例化：
 		// The TargetSource will handle target instances in a custom fashion.
+		// TargetSource将以自定义方式处理目标实例。
 		TargetSource targetSource = getCustomTargetSource(beanClass, beanName);
 		if (targetSource != null) {
 			if (StringUtils.hasLength(beanName)) {
@@ -429,6 +432,8 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 	}
 
 	/**
+	 * 为给定的bean创建一个AOP代理。
+	 *
 	 * Create an AOP proxy for the given bean.
 	 * @param beanClass the class of the bean
 	 * @param beanName the name of the bean
@@ -450,10 +455,13 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 		proxyFactory.copyFrom(this);
 
 		if (!proxyFactory.isProxyTargetClass()) {
+			// 是否应该代理目标类
 			if (shouldProxyTargetClass(beanClass, beanName)) {
+				// 设置代理目标类
 				proxyFactory.setProxyTargetClass(true);
 			}
 			else {
+				// 评估代理接口
 				evaluateProxyInterfaces(beanClass, proxyFactory);
 			}
 		}
@@ -461,6 +469,7 @@ public abstract class AbstractAutoProxyCreator extends ProxyProcessorSupport
 		Advisor[] advisors = buildAdvisors(beanName, specificInterceptors);
 		proxyFactory.addAdvisors(advisors);
 		proxyFactory.setTargetSource(targetSource);
+		// 定制工厂
 		customizeProxyFactory(proxyFactory);
 
 		proxyFactory.setFrozen(this.freezeProxy);

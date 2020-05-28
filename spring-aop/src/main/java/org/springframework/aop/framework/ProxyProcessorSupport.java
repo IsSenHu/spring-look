@@ -111,13 +111,16 @@ public class ProxyProcessorSupport extends ProxyConfig implements Ordered, BeanC
 				break;
 			}
 		}
+		// 如果有能够代理的接口
 		if (hasReasonableProxyInterface) {
+			// 必须允许介绍；不能仅将接口设置为目标的接口。
 			// Must allow for introductions; can't just set interfaces to the target's interfaces only.
 			for (Class<?> ifc : targetInterfaces) {
 				proxyFactory.addInterface(ifc);
 			}
 		}
 		else {
+			// 没有能够代理的接口，则设置为代理目标类
 			proxyFactory.setProxyTargetClass(true);
 		}
 	}

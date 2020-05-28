@@ -43,6 +43,8 @@ package org.springframework.core;
 public interface Ordered {
 
 	/**
+	 * 最高优先级值的有用常数。
+	 *
 	 * Useful constant for the highest precedence value.
 	 * @see java.lang.Integer#MIN_VALUE
 	 */

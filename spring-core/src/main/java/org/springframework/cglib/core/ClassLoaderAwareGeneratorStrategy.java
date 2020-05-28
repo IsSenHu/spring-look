@@ -42,6 +42,7 @@ public class ClassLoaderAwareGeneratorStrategy extends DefaultGeneratorStrategy 
 		Thread currentThread = Thread.currentThread();
 		ClassLoader threadContextClassLoader;
 		try {
+			// 获取当前线程上下文类加载器
 			threadContextClassLoader = currentThread.getContextClassLoader();
 		}
 		catch (Throwable ex) {
@@ -49,6 +50,7 @@ public class ClassLoaderAwareGeneratorStrategy extends DefaultGeneratorStrategy 
 			return super.generate(cg);
 		}
 
+		// 是否覆盖当前线程上下文类加载器
 		boolean overrideClassLoader = !this.classLoader.equals(threadContextClassLoader);
 		if (overrideClassLoader) {
 			currentThread.setContextClassLoader(this.classLoader);
@@ -59,6 +61,7 @@ public class ClassLoaderAwareGeneratorStrategy extends DefaultGeneratorStrategy 
 		finally {
 			if (overrideClassLoader) {
 				// Reset original thread context ClassLoader.
+				// 还原线程上下文类加载器
 				currentThread.setContextClassLoader(threadContextClassLoader);
 			}
 		}
