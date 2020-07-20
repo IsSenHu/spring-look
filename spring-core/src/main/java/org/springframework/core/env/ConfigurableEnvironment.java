@@ -19,6 +19,10 @@ package org.springframework.core.env;
 import java.util.Map;
 
 /**
+ * 多数(如果不是所有的话){@link Environment}类型将实现配置接口。
+ * 提供设置激活配置文件和默认配置文件以及操作底层属性源的工具。
+ * 允许客户端通过{@link ConfigurablePropertyResolver}父接口设置和验证所需的属性、定制转换服务等。
+ *
  * Configuration interface to be implemented by most if not all {@link Environment} types.
  * Provides facilities for setting active and default profiles and manipulating underlying
  * property sources. Allows clients to set and validate required properties, customize the
@@ -72,6 +76,8 @@ import java.util.Map;
 public interface ConfigurableEnvironment extends Environment, ConfigurablePropertyResolver {
 
 	/**
+	 * 为这个Environment指定一组激活的配置文件。配置文件在容器引导期间进行评估，以确定是否应该向容器注册bean定义。
+	 *
 	 * Specify the set of profiles active for this {@code Environment}. Profiles are
 	 * evaluated during container bootstrap to determine whether bean definitions
 	 * should be registered with the container.

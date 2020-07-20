@@ -24,6 +24,9 @@ import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.lang.Nullable;
 
 /**
+ * 中央接口，为应用程序提供配置。
+ * 在应用程序运行时是只读的，但如果实现支持，则可以重新加载。
+ *
  * Central interface to provide configuration for an application.
  * This is read-only while the application is running, but may be
  * reloaded if the implementation supports this.
@@ -59,6 +62,8 @@ public interface ApplicationContext extends EnvironmentCapable, ListableBeanFact
 		MessageSource, ApplicationEventPublisher, ResourcePatternResolver {
 
 	/**
+	 * 返回此应用程序上下文的唯一ID。
+	 *
 	 * Return the unique id of this application context.
 	 * @return the unique id of the context, or {@code null} if none
 	 */
@@ -66,24 +71,32 @@ public interface ApplicationContext extends EnvironmentCapable, ListableBeanFact
 	String getId();
 
 	/**
+	 * 返回此上下文所属的已部署应用程序的名称。
+	 *
 	 * Return a name for the deployed application that this context belongs to.
 	 * @return a name for the deployed application, or the empty String by default
 	 */
 	String getApplicationName();
 
 	/**
+	 * 返回此上下文的友好名称。
+	 *
 	 * Return a friendly name for this context.
 	 * @return a display name for this context (never {@code null})
 	 */
 	String getDisplayName();
 
 	/**
+	 * 返回首次加载此上下文时的时间戳。
+	 *
 	 * Return the timestamp when this context was first loaded.
 	 * @return the timestamp (ms) when this context was first loaded
 	 */
 	long getStartupDate();
 
 	/**
+	 * 返回父上下文，如果没有父，则返回{@code null}，这是上下文层次结构的根。
+	 *
 	 * Return the parent context, or {@code null} if there is no parent
 	 * and this is the root of the context hierarchy.
 	 * @return the parent context, or {@code null} if there is no parent
@@ -92,6 +105,11 @@ public interface ApplicationContext extends EnvironmentCapable, ListableBeanFact
 	ApplicationContext getParent();
 
 	/**
+	 * 针对此上下文公开AutowireCapableBeanFactory功能。
+	 * 除以下目的外，应用程序代码通常不使用此方法：初始化位于应用程序上下文之外的bean实例，（全部或部分）应用Spring bean生命周期。
+	 * 或者，通过{{link ConfigurableApplicationContext}接口公开的内部BeanFactory也可以访问{{link AutowireCapableBeanFactory}接口。
+	 * 本方法主要用作ApplicationContext接口上的便捷特定工具。
+	 *
 	 * Expose AutowireCapableBeanFactory functionality for this context.
 	 * <p>This is not typically used by application code, except for the purpose of
 	 * initializing bean instances that live outside of the application context,

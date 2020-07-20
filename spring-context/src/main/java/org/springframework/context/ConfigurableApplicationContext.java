@@ -27,6 +27,12 @@ import org.springframework.core.io.ProtocolResolver;
 import org.springframework.lang.Nullable;
 
 /**
+ * 大多数应用程序上下文(如果不是全部的话)将实现SPI接口。
+ * 除了ApplicationContext接口中的应用程序上下文客户端方法外，还提供用于配置应用程序上下文的工具。
+ *
+ * 这里封装了配置和生命周期方法，以避免让ApplicationContext客户端代码看到它们。
+ * 方法只能在启动和关闭代码中使用。
+ *
  * SPI interface to be implemented by most if not all application contexts.
  * Provides facilities to configure an application context in addition
  * to the application context client methods in the
@@ -97,12 +103,17 @@ public interface ConfigurableApplicationContext extends ApplicationContext, Life
 
 
 	/**
+	 * 设置此应用程序上下文的唯一ID。
+	 *
 	 * Set the unique id of this application context.
 	 * @since 3.0
 	 */
 	void setId(String id);
 
 	/**
+	 * 设置此应用程序上下文的父级。
+	 * 请注意，不应更改父对象：仅当在创建此类的对象时不可用时，才应在构造函数外部设置，例如在WebApplicationContext设置的情况下。
+	 *
 	 * Set the parent of this application context.
 	 * <p>Note that the parent shouldn't be changed: It should only be set outside
 	 * a constructor if it isn't available when an object of this class is created,
@@ -113,6 +124,8 @@ public interface ConfigurableApplicationContext extends ApplicationContext, Life
 	void setParent(@Nullable ApplicationContext parent);
 
 	/**
+	 * 为此应用程序上下文设置{@code Environment}。
+	 *
 	 * Set the {@code Environment} for this application context.
 	 * @param environment the new environment
 	 * @since 3.1
@@ -120,6 +133,8 @@ public interface ConfigurableApplicationContext extends ApplicationContext, Life
 	void setEnvironment(ConfigurableEnvironment environment);
 
 	/**
+	 * 以可配置的形式返回此应用程序上下文的{@code Environment}，以便进行进一步的自定义。
+	 *
 	 * Return the {@code Environment} for this application context in configurable
 	 * form, allowing for further customization.
 	 * @since 3.1
@@ -128,6 +143,9 @@ public interface ConfigurableApplicationContext extends ApplicationContext, Life
 	ConfigurableEnvironment getEnvironment();
 
 	/**
+	 * 添加一个新的BeanFactoryPostProcessor，它将在刷新时应用于此应用程序上下文的内部bean工厂，然后再对任何bean定义进行评估。
+	 * 在上下文配置期间调用。
+	 *
 	 * Add a new BeanFactoryPostProcessor that will get applied to the internal
 	 * bean factory of this application context on refresh, before any of the
 	 * bean definitions get evaluated. To be invoked during context configuration.
@@ -136,6 +154,10 @@ public interface ConfigurableApplicationContext extends ApplicationContext, Life
 	void addBeanFactoryPostProcessor(BeanFactoryPostProcessor postProcessor);
 
 	/**
+	 * 添加一个新的ApplicationListener，它将在上下文事件(如上下文刷新和上下文关闭)上得到通知。
+	 * 注意，在这里注册的任何ApplicationListener都将在刷新时应用(如果上下文尚未激活)，
+	 * 或者在上下文已经激活的情况下使用当前事件多播器动态应用。
+	 *
 	 * Add a new ApplicationListener that will be notified on context events
 	 * such as context refresh and context shutdown.
 	 * <p>Note that any ApplicationListener registered here will be applied
@@ -148,6 +170,9 @@ public interface ConfigurableApplicationContext extends ApplicationContext, Life
 	void addApplicationListener(ApplicationListener<?> listener);
 
 	/**
+	 * 将给定的协议解析器注册到此应用程序上下文中，允许处理其他资源协议。
+	 * 任何此类解析器都将在此上下文的标准解析规则之前调用。因此，它还可能覆盖任何默认规则。
+	 *
 	 * Register the given protocol resolver with this application context,
 	 * allowing for additional resource protocols to be handled.
 	 * <p>Any such resolver will be invoked ahead of this context's standard
@@ -157,6 +182,10 @@ public interface ConfigurableApplicationContext extends ApplicationContext, Life
 	void addProtocolResolver(ProtocolResolver resolver);
 
 	/**
+	 * 加载或刷新配置的持久表示，它可以是XML文件、属性文件或关系数据库模式。
+	 * 由于这是一种启动方法，如果失败，它应该销毁已经创建的单例，以避免悬挂资源。
+	 * 换句话说，在调用该方法之后，应该实例化所有或根本不实例化单例。
+	 *
 	 * Load or refresh the persistent representation of the configuration,
 	 * which might an XML file, properties file, or relational database schema.
 	 * <p>As this is a startup method, it should destroy already created singletons
@@ -169,6 +198,9 @@ public interface ConfigurableApplicationContext extends ApplicationContext, Life
 	void refresh() throws BeansException, IllegalStateException;
 
 	/**
+	 * 向JVM运行时注册一个关闭钩子，在JVM关闭时关闭这个上下文，除非它已经关闭了。
+	 * 这个方法可以被多次调用。每个上下文实例只注册一个关闭钩子(最大)。
+	 *
 	 * Register a shutdown hook with the JVM runtime, closing this context
 	 * on JVM shutdown unless it has already been closed at that time.
 	 * <p>This method can be called multiple times. Only one shutdown hook
@@ -181,6 +213,10 @@ public interface ConfigurableApplicationContext extends ApplicationContext, Life
 	void registerShutdownHook();
 
 	/**
+	 * 关闭此应用程序上下文，释放实现可能持有的所有资源和锁。这包括销毁所有缓存的单例bean。
+	 * 注意:在父上下文中不调用{@code close};父上下文中有自己独立的生命周期。
+	 * 这个方法可以被多次调用而不产生副作用:对已经关闭的上下文的后续{@code close}调用将被忽略。
+	 *
 	 * Close this application context, releasing all resources and locks that the
 	 * implementation might hold. This includes destroying all cached singleton beans.
 	 * <p>Note: Does <i>not</i> invoke {@code close} on a parent context;
@@ -192,6 +228,8 @@ public interface ConfigurableApplicationContext extends ApplicationContext, Life
 	void close();
 
 	/**
+	 * 确定此应用程序上下文是否处于活动状态，即它是否至少刷新一次且尚未关闭。
+	 *
 	 * Determine whether this application context is active, that is,
 	 * whether it has been refreshed at least once and has not been closed yet.
 	 * @return whether the context is still active
@@ -202,6 +240,12 @@ public interface ConfigurableApplicationContext extends ApplicationContext, Life
 	boolean isActive();
 
 	/**
+	 * 返回此应用程序上下文的内部bean工厂。可以用于访问底层工厂的特定功能。
+	 * 注意:不要使用它来对bean工厂进行后期处理;单例对象在之前已经被实例化过了。
+	 * 在接触bean之前，使用BeanFactoryPostProcessor拦截BeanFactory设置过程。
+	 * 通常，这个内部工厂只有在上下文处于活动状态时才可以访问，即处于{@link #refresh()}和{@link #close()}之间。
+	 * 可以使用{@link #isActive()}标志检查上下文是否处于适当的状态。
+	 *
 	 * Return the internal bean factory of this application context.
 	 * Can be used to access specific functionality of the underlying factory.
 	 * <p>Note: Do not use this to post-process the bean factory; singletons
